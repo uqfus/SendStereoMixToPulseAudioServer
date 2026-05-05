@@ -67,6 +67,6 @@ pacman -S mingw-w64-ucrt-x86_64-pulseaudio
 pacman -S mingw-w64-ucrt-x86_64-gcc
 #Compile
 windres.exe SendStereoMixToPulseAudioServer.rc SendStereoMixToPulseAudioServer.rc.o
-gcc -mwindows -municode -O3 SendStereoMixToPulseAudioServer.cpp SendStereoMixToPulseAudioServer.rc.o -l:libavrt.a -l:libmfplat.a -l:libole32.a -llibpulse-simple -o SendStereoMixToPulseAudioServer.exe
+gcc -mwindows -municode -O3 SendStereoMixToPulseAudioServer.cpp SendStereoMixToPulseAudioServer.rc.o -l:libavrt.a -l:libmfplat.a -l:libole32.a -llibpulse-simple -llibpulse -o SendStereoMixToPulseAudioServer.exe
 strip.exe SendStereoMixToPulseAudioServer.exe 
 ```

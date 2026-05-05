@@ -8,8 +8,8 @@
 
 #include "SendStereoMixToPulseAudioServer.h"
 
-#pragma pack(1)
-#include "pulse/simple.h" // PulseAudio pa_simple API
+#include <pulse/simple.h> // PulseAudio pa_simple API
+#include <pulse/error.h>
 
 #pragma comment(lib, "libpulse-simple.dll.a")
 #pragma comment(lib, "avrt.lib")   // multimedia class scheduler Thread Priority
@@ -129,7 +129,7 @@ static DWORD WINAPI StreamThread(LPVOID lpParam)
     if (!(s = pa_simple_new(g_PulseAudioServer, "SendStereoMixToPulseAudioServer.exe", PA_STREAM_PLAYBACK,
         NULL, "StereoMix", &ss, NULL, NULL, &pa_error)))
     {
-        NotifyIcon_SetTipText(L"ERROR: pa_simple_new() failed: %d", pa_error);
+        NotifyIcon_SetTipText(L"ERROR: pa_simple_new() failed: %S", pa_strerror(pa_error));
         goto finish;
     }
 
@@ -193,7 +193,7 @@ static DWORD WINAPI StreamThread(LPVOID lpParam)
                         // pa_simple_write - is blocking until all data has been transmitted
                         if (pa_simple_write(s, pData, (size_t)BufferSize, &pa_error) < 0)
                         {
-                            NotifyIcon_SetTipText(L"ERROR: pa_simple_write() failed: %d", pa_error);
+                            NotifyIcon_SetTipText(L"ERROR: pa_simple_write() failed: %S", pa_strerror(pa_error));
                             goto finish;
                         }
                     }
