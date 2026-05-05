@@ -61,10 +61,12 @@ To add utility to Windows autostart. Modify AddToAutostart.bat as required and e
 
 ## Compiling
 Download and install MSYS2 build system - msys2-x86_64-20260322.exe
-Install packages
+```
+#Install packages
 pacman -S mingw-w64-ucrt-x86_64-pulseaudio
 pacman -S mingw-w64-ucrt-x86_64-gcc
-Compile
+#Compile
 windres.exe SendStereoMixToPulseAudioServer.rc SendStereoMixToPulseAudioServer.rc.o
 gcc -mwindows -municode -O3 SendStereoMixToPulseAudioServer.cpp SendStereoMixToPulseAudioServer.rc.o -l:libavrt.a -l:libmfplat.a -l:libole32.a -llibpulse-simple -o SendStereoMixToPulseAudioServer.exe
 strip.exe SendStereoMixToPulseAudioServer.exe 
+```
