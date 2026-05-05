@@ -1,0 +1,3 @@
+#include "resource.h"
+IDI_PULSEAUDIOICON      ICON                    "pulseaudio.ico"
+IDI_PULSEAUDIOICONGRAY  ICON                    "pulseaudiogray.ico"
