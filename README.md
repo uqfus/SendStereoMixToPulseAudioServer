@@ -54,9 +54,9 @@ Execute
 SendStereoMixToPulseAudioServer.exe <server-name-or-ip>
 ```
 Streaming should start immediately.
-Use tray icon to stop streaming and exit
+Use tray icon to stop streaming and exit.
 
-To add utility to Windows autostart. Modify AddToAutostart.bat as required and execute it.
+To add/remove utility to Windows autostart use AddToAutostart.bat. Run AddToAutostart.bat -h for usage info.
 
 
 ## Compiling
