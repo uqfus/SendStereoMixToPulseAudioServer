@@ -94,7 +94,7 @@ static DWORD WINAPI StreamThread(LPVOID lpParam)
 
     WaveCaptureFormat.wFormatTag = WAVE_FORMAT_PCM;
     WaveCaptureFormat.nChannels = 2;
-    WaveCaptureFormat.nSamplesPerSec = 44100;
+    WaveCaptureFormat.nSamplesPerSec = 48000;
     WaveCaptureFormat.wBitsPerSample = 16;
 #define BITS_PER_BYTE 8
     WaveCaptureFormat.nBlockAlign = WaveCaptureFormat.nChannels * WaveCaptureFormat.wBitsPerSample / BITS_PER_BYTE;

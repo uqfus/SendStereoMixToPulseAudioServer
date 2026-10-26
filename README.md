@@ -70,3 +70,7 @@ windres.exe SendStereoMixToPulseAudioServer.rc SendStereoMixToPulseAudioServer.r
 gcc -mwindows -municode -O3 SendStereoMixToPulseAudioServer.cpp SendStereoMixToPulseAudioServer.rc.o -l:libavrt.a -l:libmfplat.a -l:libole32.a -llibpulse-simple -llibpulse -o SendStereoMixToPulseAudioServer.exe
 strip.exe SendStereoMixToPulseAudioServer.exe 
 ```
+
+## Thanks to
+https://github.com/mjansson/mdns
+gcc mdns.c -l:libonecore.a -o mdns.exe
