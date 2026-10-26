@@ -1,19 +1,15 @@
 name: build
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
   push:
     branches: [main, master]
-    tags: ["v*"]
+    tags:
+      - "v*.*"
   pull_request:
-
-# нужен дл€ публикации Release по тегу
-permissions:
-  contents: write
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,9 +18,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          lfs: true          # на случай, если mdns.exe лежит в git-lfs
+        uses: actions/checkout@v7
 
       - name: Setup MSYS2 (UCRT64)
         uses: msys2/setup-msys2@v2
@@ -62,68 +56,31 @@ jobs:
         run: |
           set -o errexit -o nounset -o pipefail
 
-          OUT=pkg
-          rm -rf "$OUT"
-          mkdir -p "$OUT"
+          rm -rf pkg
+          mkdir -p pkg
 
-          cp -v SendStereoMixToPulseAudioServer.exe "$OUT"/
-          cp -v AddToAutostart.bat "$OUT"/
-
-          # mdns.exe: берЄм готовый из репозитори€, иначе собираем из исходников
-          if [[ -f mdns.exe ]]; then
-            cp -v mdns.exe "$OUT"/
-          elif [[ -f mdns.c ]]; then
-            # при необходимости поправьте флаги/файлы под вашу сборку mdns
-            gcc -O3 -municode mdns.c -l:libws2_32.a -l:libiphlpapi.a -o "$OUT/mdns.exe"
-            strip.exe -s "$OUT/mdns.exe"
-          else
-            echo "::error::mdns.exe (или mdns.c) не найден в репозитории"
-            exit 1
-          fi
-
-          # –екурсивно выписываем все non-system DLL, лежащие в /ucrt64/bin
-          declare -A SEEN
-          pending=("$(pwd)/SendStereoMixToPulseAudioServer.exe")
-
-          while ((${#pending[@]} > 0)); do
-            cur="${pending[0]}"
-            pending=("${pending[@]:1}")
-            while read -r dll; do
-              [[ -z "$dll" ]] && continue
-              key=$(tr '[:upper:]' '[:lower:]' <<<"$dll")
-              [[ -n "${SEEN[$key]:-}" ]] && continue
-              SEEN[$key]=1
-              src=$(find "$MSYSTEM_PREFIX/bin" -maxdepth 1 -iname "$dll" -print -quit 2>/dev/null || true)
-              [[ -z "$src" ]] && continue   # DLL из Windows (kernel32, ole32, ...) Ч не копируем
-              cp -v "$src" "$OUT"/
-              pending+=("$src")
-            done < <(objdump -p "$cur" | tr -d '\r' | awk '/^[[:space:]]*DLL Name:/ {print $3}')
-          done
-
-          echo '### —одержимое архива' >>"$GITHUB_STEP_SUMMARY"
-          echo '```' >>"$GITHUB_STEP_SUMMARY"
-          ls -l -- "$OUT" >>"$GITHUB_STEP_SUMMARY"
-          echo '```' >>"$GITHUB_STEP_SUMMARY"
+          cp -v SendStereoMixToPulseAudioServer.exe pkg/
+          # ucrt64 shared library dependencies
+          ldd SendStereoMixToPulseAudioServer.exe | grep ucrt64 | awk '{print $3}' | xargs -r cp -t pkg/
+          cp -v AddToAutostart.bat pkg/
+          cp -v mdns.exe pkg/
 
       - name: Pack SendStereoMixToPulseAudioServer.zip
         shell: msys2 {0}
         run: |
           set -o errexit -o nounset -o pipefail
           rm -f SendStereoMixToPulseAudioServer.zip
-          # -j Ч без каталогов: все файлы лежат в корне архива
           (cd pkg && zip -9 -X -j ../SendStereoMixToPulseAudioServer.zip *)
-          unzip -l SendStereoMixToPulseAudioServer.zip
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: SendStereoMixToPulseAudioServer-win64
           path: SendStereoMixToPulseAudioServer.zip
           if-no-files-found: error
 
       - name: Attach to GitHub Release (only on tag)
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v3
         with:
           files: SendStereoMixToPulseAudioServer.zip
-          generate_release_notes: true
