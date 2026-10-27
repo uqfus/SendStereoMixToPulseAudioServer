@@ -61,7 +61,7 @@ jobs:
 
           cp -v SendStereoMixToPulseAudioServer.exe pkg/
           # ucrt64 shared library dependencies
-          ldd SendStereoMixToPulseAudioServer.exe | grep ucrt64 | awk '{print $3}' | xargs -r cp -v -t pkg/
+          ldd SendStereoMixToPulseAudioServer.exe | grep ucrt64 | awk '{print $3}' | sort --unique | xargs cp -v -t pkg/
           cp -v AddToAutostart.bat pkg/
           cp -v mdns.exe pkg/
 
