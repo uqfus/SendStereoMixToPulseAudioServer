@@ -73,4 +73,5 @@ strip.exe SendStereoMixToPulseAudioServer.exe
 
 ## Thanks to
 https://github.com/mjansson/mdns
+
 gcc mdns.c -l:libonecore.a -o mdns.exe
