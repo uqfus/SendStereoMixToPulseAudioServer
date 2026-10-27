@@ -38,10 +38,10 @@ rem show usage
 
 :usage
 echo Usage:
-echo   %~nx0 [server-name-or-IP]  - add or update the autostart entry
-echo   %~nx0 -s --show            - show the existing registry entry
-echo   %~nx0 -r --remove          - delete the autostart entry
-echo   %~nx0 /? /h -h --help      - this help
+echo   %~nx0 server-name-or-IP - add or update the autostart entry
+echo   %~nx0 -s --show         - show the existing registry entry
+echo   %~nx0 -r --remove       - delete the autostart entry
+echo   %~nx0 /? /h -h --help   - this help
 echo.
 echo   Server name or IP address is required.
 echo.
